@@ -19,7 +19,7 @@ file_handler.setLevel('DEBUG')
 
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 console_handler.setFormatter(formatter)
-file_handler.setFormatter('DEBUG')
+file_handler.setFormatter(formatter)
 
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
@@ -73,7 +73,8 @@ def apply_tfidf(train_data: pd.DataFrame , test_data: pd.DataFrame , max_feature
 
         test_df = pd.DataFrame(X_test_bow.toarray())
         test_df['label'] = y_test
-
+        
+        logger.debug('tfidf applied and data transformed')
         return train_df, test_df
     except Exception as e :
         logger.error('Error during bag od Words transformation: % s' , e)
