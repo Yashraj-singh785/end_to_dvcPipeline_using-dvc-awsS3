@@ -26,22 +26,23 @@ file_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 
-def load_params(params_path :str) -> dict:
-    """Load parameters from a YAML file."""
+"""
+def load_params(params_path: str)-> dict:
+    ''' load parameters from a YAML file.'''
     try:
-        with open(params_path , 'r') as file:
+        with open (params_path, 'r') as file:
             params = yaml.safe_load(file)
-        logger.debug("Parameters retrived from %s" , params_path)
+        logger.debug('Parameters retrived from %s' , params_path)
         return params
-    except FileNotFoundError:
-        logger.error('File not found: % ', params_path)
+    except FileNotFoundError :
+        logger.error('file not fount: %s' ,params_path)
         raise
-    except yaml.YAMLError as e:
-        logger.error('YAML error: %s' ,e)
+    except yaml.YAMLError as e :
+        logger.error('YAML error: %s', e)
         raise
     except Exception as e :
-        logger.error('Unexpected error: %s' ,e)
-        raise
+        logger.error('UNexpected error: %s', e)
+        raise   """
 
 def load_data(file_path: str) -> pd.DataFrame:
     """
@@ -53,6 +54,7 @@ def load_data(file_path: str) -> pd.DataFrame:
     try: 
         df = pd.read_csv(file_path)
         logger.debug('Data loaded from %s with shape %s', file_path, df.shape)
+        return df
     except pd.errors.ParserError as e:
         logger.error('Failed to parse the CSV file: %s', e)
         raise
@@ -115,7 +117,8 @@ def save_model(model, file_path: str) -> None:
 
 def main():
     try:
-        params = load_params('params.yaml')['model_building']
+        params ={'n_estimators': 25 ,'random_state': 42}
+        #params = load_params('params.yaml')['model_building']
         train_data = load_data('./data/processed/train_tfidf.csv')
         X_train = train_data.iloc[:, :-1].values
         y_train = train_data.iloc[:,-1].values
