@@ -28,7 +28,7 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(console_handler)
 
-"""
+
 def load_params(params_path: str)-> dict:
     ''' load parameters from a YAML file.'''
     try:
@@ -44,7 +44,7 @@ def load_params(params_path: str)-> dict:
         raise
     except Exception as e :
         logger.error('UNexpected error: %s', e)
-        raise   """
+        raise   
 
 
 def load_model(file_path: str):
@@ -85,7 +85,7 @@ def evaluate_model(clf, X_test: np.ndarray, y_test: np.ndarray)-> dict:
         accuracy = accuracy_score(y_test,y_pred)
         precision =precision_score(y_test, y_pred)
         recall = recall_score(y_test, y_pred)
-        auc = roc_auc_score(y_test, y_pred)\
+        auc = roc_auc_score(y_test,y_pred_proba)
         
         metrics_dict ={
             'accuracy' : accuracy,
@@ -115,7 +115,7 @@ def save_metrics(metrics: dict, file_path: str) -> None:
 def main():
     try:
         
-        #params = load_params(params_path = 'params.yaml')
+        params = load_params(params_path = 'params.yaml')
         clf = load_model('./models/model.pkl')
         test_data = load_data('./data/processed/test_tfidf.csv')
 
@@ -123,14 +123,14 @@ def main():
         y_test = test_data.iloc[:, -1].values
 
         metrics = evaluate_model(clf, X_test,y_test)
-       
+        y_pred = clf.predict(X_test)
         # Experiment tracking using dvclive
-        '''with Live(save_dvc_exp= True) as live:
-            live.log_metric('accuracy' , accuracy_score(y_test,y_test))
-            live.log_metric('precision', precision_score(y_test, y_test))
-            live.log_metric('recall', recall_score(y_test, y_test))
+        with Live(save_dvc_exp= True) as live:
+            live.log_metric('accuracy' , accuracy_score(y_test,y_pred))
+            live.log_metric('precision', precision_score(y_test,y_pred ))
+            live.log_metric('recall', recall_score(y_test, y_pred))
 
-            live.log_params(params) '''
+            live.log_params(params) 
 
         save_metrics(metrics, 'reports/metrics.json')
     except Exception as e :
